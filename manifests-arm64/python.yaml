@@ -1,0 +1,43 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: python-arm64
+  labels:
+    app: python-arm64
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: python-arm64
+  template:
+    metadata:
+      labels:
+        app: python-arm64
+    spec:
+      nodeSelector:
+        kubernetes.io/arch: arm64
+      containers:
+      - name: node
+        image: 164382793440.dkr.ecr.us-west-2.amazonaws.com/reinvent/app1:arm64
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: python-arm64
+spec:
+  type: NodePort
+  selector:
+    app: python-arm64
+  ports:
+    - port: 80

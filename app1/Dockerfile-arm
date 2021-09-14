@@ -1,0 +1,14 @@
+FROM arm64v8/python:rc-alpine
+
+ENV FLASK_APP=main
+ENV FLASK_ENV=development
+
+COPY . /app
+
+WORKDIR /app
+
+RUN pip install -r requirements.txt
+
+EXPOSE 5000
+
+CMD [ "flask", "run", "--host=0.0.0.0" ]
