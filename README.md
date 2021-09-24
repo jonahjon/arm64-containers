@@ -17,7 +17,11 @@ Demo Overview
 - GuardRails (Apps getting scheduled on incorrect nodes)
 - Order of apps (Common to least common?)
 - Record video ahead of time in case of internet/power out
-- Migration first, then move to builds after while engaging
+- Migration first, then move to builds after while engaging (Focus on Apps)
 - Call to action Graviton Challenge
-
 - Seed Questions?
+
+
+
+- Load balancing between amd/arm svc's 
+- Canary story 3/1 amd vs arm

@@ -1,0 +1,6 @@
+[submodule "posthog"]
+	path = posthog
+	url = https://github.com/jonahjon/posthog.git
+[submodule "charts"]
+	path = charts
+	url = https://github.com/PostHog/charts.git

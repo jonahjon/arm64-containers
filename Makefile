@@ -19,13 +19,13 @@ arm-ami:
 app1: app1-build app1-arm-build
 
 app1-build: ecr-login
-	cd app1 && docker build -t python-amd64 .
-	docker tag python-amd64 $(REG)/reinvent/app1:amd64
+	cd posthog && docker build -t posthog:amd64 -f Dockerfile .
+	docker tag posthog:amd64 $(REG)/reinvent/app1:amd64
 	docker push $(REG)/reinvent/app1:amd64
 
 app1-arm-build: ecr-login
-	cd app1 && docker build -f Dockerfile-arm -t python-arm64 .
-	docker tag python-arm64 $(REG)/reinvent/app1:arm64
+	cd posthog/ && docker build -t posthog:arm64 -f arm.Dockerfile .
+	docker tag posthog:arm64 $(REG)/reinvent/app1:arm64
 	docker push $(REG)/reinvent/app1:arm64
 
 # App2
@@ -60,17 +60,22 @@ kubectl-86:
 kubectl-arm:
 	kubectl apply -f manifests-arm64/
 
+posthog-deploy:
+	helm install --timeout 15m --create-namespace --namespace posthog posthog -f charts/charts/posthog/values.yaml ./charts/charts/posthog --debug
+
+posthog-arm:
+	helm install --timeout 15m --create-namespace --namespace posthog posthog -f charts/charts/posthog/values-arm.yaml ./charts/charts/posthog --debug
+
+posthog-port-forward:
+	kubectl port-forward deployment/posthog-web 8000:8000
+
 port-forward:
-	kubectl port-forward deploy/hello-eks-a 8000:80
 	kubectl port-forward deployment/go-arm64 8080:8080
 	kubectl port-forward deployment/go-x86 8080:8080
 	kubectl port-forward deployment/node-amd64 8081:8081
 	kubectl port-forward deployment/node-arm64 8081:8081
-	kubectl port-forward deployment/python-amd64 5000:5000
-	kubectl port-forward deployment/python-arm64 5000:5000
 
-
-port-forward-arm:
-	kubectl port-forward deploy/hello-arm64 8000:80
-
-#aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin aws_account_id.dkr.ecr.${AWS_REGION}.amazonaws.com
+update-cluster:
+	eksctl utils update-kube-proxy --cluster arm64 --approve
+	eksctl utils update-coredns --cluster arm64 --approve
+	eksctl utils update-aws-node --cluster arm64 --approve
